@@ -1,27 +1,26 @@
 const http = require('http');
-const { translate } = require('free-translate');
+const translate = require('translate-google')
 
 const server = http.createServer((req, res) => {
     if (req.method === 'POST' && req.url === '/') {
         let body = '';
-
+        
         req.on('data', chunk => {
-            body += chunk.toString();
+            body += chunk.toString(); 
         });
-
+        
         req.on('end', async () => {
             try {
-                let data = JSON.parse(body)
-                if (!data.text) {
-                    res.writeHead(400, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ error: 'Text to translate is missing in request body' }));
-                    return;
-                }
+                const data = JSON.parse(body);
 
-                const translatedText = await translate(data.text, { from: 'en', to: 'fr' });
-
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ translation: translatedText }));
+                translate(data.text, {to: 'fr'}).then(translatedText => {
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ translated: translatedText }));
+                }).catch(err => {
+                    console.error(err);
+                    res.writeHead(500, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Internal server error' }));
+                });
             } catch (error) {
                 console.error('Error occurred during translation:', error);
                 res.writeHead(500, { 'Content-Type': 'application/json' });
@@ -29,8 +28,8 @@ const server = http.createServer((req, res) => {
             }
         });
     } else if (req.method === 'GET' && req.url === '/') {
-        res.writeHead(200, { 'Content-Type': 'text/plain' });
-        res.end('Hello, welcome to the translator!');
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ text: 'Translator' }));
     } else {
         res.writeHead(404, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Not found' }));
