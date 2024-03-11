@@ -18,11 +18,13 @@ const server = http.createServer((req, res) => {
                     return;
                 }
 
-
-                const translatedText = await translate(data.text, { from: 'en', to: 'fr' });
-
-
+                (async () => {
+                    const translatedText = await translate('Hello World', { from: 'en', to: 'fr' });
+                  
                 res.end(JSON.stringify({ translation: translatedText }));
+
+                  })();
+
 
             } catch (error) {
                 console.error('Error occurred during translation:', error);
