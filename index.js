@@ -29,7 +29,7 @@ const server = http.createServer((req, res) => {
         });
     } else if (req.method === 'GET' && req.url === '/') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ text: 'Translator' }));
+        res.end(JSON.stringify("Hit it with post request to test it :)!"));
     } else {
         res.writeHead(404, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Not found' }));
