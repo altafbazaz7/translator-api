@@ -18,20 +18,19 @@ const server = http.createServer((req, res) => {
                     return;
                 }
 
-                (async () => {
-                    const translatedText = await translate('Hello World', { from: 'en', to: 'fr' });
-                  
+                const translatedText = await translate(data.text, { from: 'en', to: 'fr' });
+
+                res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ translation: translatedText }));
-
-                  })();
-
-
             } catch (error) {
                 console.error('Error occurred during translation:', error);
                 res.writeHead(500, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ error: 'Internal server error' }));
             }
         });
+    } else if (req.method === 'GET' && req.url === '/') {
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('Hello, welcome to the translator!');
     } else {
         res.writeHead(404, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Not found' }));
