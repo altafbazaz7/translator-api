@@ -2,7 +2,7 @@ const http = require('http');
 const { translate } = require('free-translate');
 
 const server = http.createServer((req, res) => {
-    if (req.method === 'POST' && req.url === '/translate') {
+    if (req.method === 'POST' && req.url === '/') {
         let body = '';
 
         req.on('data', chunk => {
@@ -22,7 +22,7 @@ const server = http.createServer((req, res) => {
                 const translatedText = await translate(data.text, { from: 'en', to: 'fr' });
 
 
-                res.end(JSON.stringify({ text: translatedText }));
+                res.end(JSON.stringify({ translation: translatedText }));
 
             } catch (error) {
                 console.error('Error occurred during translation:', error);
